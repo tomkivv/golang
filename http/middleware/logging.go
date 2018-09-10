@@ -1,4 +1,4 @@
-package logg
+package middleware
 
 import (
 	"strconv"

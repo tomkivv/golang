@@ -1,4 +1,4 @@
-package fb
+package handler
 
 import (
 	"encoding/json"
@@ -33,10 +33,10 @@ var FACEBOOK = &oauth2.Config{
 // random string for oauth2 API calls to protect against CSRF
 var	oauthStateString = "blablabla"
 
-var logger = *util.GetLoggerInstance()
+var logger = util.GetLoggerInstance()
 
 
-func Login(c echo.Context) error {
+func FBLogin(c echo.Context) error {
 	url := FACEBOOK.AuthCodeURL(oauthStateString, oauth2.AccessTypeOffline)
 	return c.Redirect(http.StatusTemporaryRedirect, url)
 }
@@ -99,7 +99,7 @@ func Accessible(c echo.Context) error {
 func Restricted(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(*JwtFBClaims)
-	logger.Infof("user found with user name '%s'", claims.Name)
+	logger.Infof("user is found with user name '%s'", claims.Name)
 	name := claims.Name
 	return c.String(http.StatusOK, "Welcome "+name+"!")
 }

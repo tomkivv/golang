@@ -1,38 +1,28 @@
 package main
 
 import (
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
-	"github.com/vtomkiv/golang.api/middleware/logg"
-	"github.com/vtomkiv/golang.api/middleware/auth/fb"
+	"github.com/vtomkiv/golang.api/gorm"
+	"github.com/vtomkiv/golang.api/http"
+	"github.com/vtomkiv/golang.api/http/handler"
 )
 
 
 func main() {
-	e := echo.New()
 
-	//init logger
-	e.Use(logg.Logger())
+	// Connect to database.
+	//TODO: os.Getenv("DB")
+	db := gorm.InitDB("user:password@/dbname?charset=utf8&parseTime=True&loc=Local")
 
-	//login route
-	e.GET("/login", fb.Login )
+	//create tables schema
+	gorm.MigrateTables(db)
 
-	//fb auth callback
-	e.GET("/auth/fb/callback", fb.HandleFBCallback)
+	tr  := &gorm.TaskRepository{DB:db}
 
-	// Restricted group
-	r := e.Group("/authorized")
+	tc := &handler.TaskController{TaskService: tr}
 
-	// Configure middleware with the custom claims type
-	config := middleware.JWTConfig{
-		Claims:     &fb.JwtFBClaims{},
-		SigningKey: []byte("secret"),
-	}
+	http.ControllerContext{TaskController:*tc}.Run()
 
-	r.Use(middleware.JWTWithConfig(config))
-	r.GET("/ping", fb.Restricted)
-
-
-	e.Logger.Fatal(e.Start(":8088"))
 }
+
+
 

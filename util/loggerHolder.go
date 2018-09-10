@@ -19,4 +19,3 @@ func GetLoggerInstance() *logrus.Logger {
 	return instance
 }
 
-
