@@ -4,14 +4,14 @@ import (
 	"github.com/vtomkiv/golang.api/gorm"
 	"github.com/vtomkiv/golang.api/http"
 	"github.com/vtomkiv/golang.api/http/handler"
+	"os"
 )
 
 
 func main() {
 
 	// Connect to database.
-	//TODO: os.Getenv("DB")
-	db := gorm.InitDB("user:password@/dbname?charset=utf8&parseTime=True&loc=Local")
+	db := gorm.InitDB(os.ExpandEnv("${USER}:&{PASSWORD}@/${DBNAME}?charset=utf8&parseTime=True&loc=Local"))
 
 	//create tables schema
 	gorm.MigrateTables(db)

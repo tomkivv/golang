@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/vtomkiv/golang.api/http/handler"
+	"os"
 )
 
 type ControllerContext struct {
@@ -39,6 +40,6 @@ func (cc ControllerContext) Run()  {
 	e.DELETE("/tasks/:id", cc.TaskController.DeleteTask)
 
 
-	e.Logger.Fatal(e.Start(":8088"))
+	e.Logger.Fatal(e.Start( os.ExpandEnv(":${PORT}")))
 
 }
